@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  lolPrediction:
+    build: .
+    ports:
+      - '8010:80'
+      - '8011:22'
+    volumes:
+      - ./app:/app
+      - ./front-end:/app/front-end
+      - ./docker/nginx/default.conf:/etc/nginx/sites-enabled/default.conf
