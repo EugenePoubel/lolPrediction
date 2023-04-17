@@ -1,0 +1,47 @@
+{
+    "name": "eugenepoubel/lolprediction",
+    "description": "Prédiction de victoire d'une partie de lol avec de l'IA",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adrien Pons",
+            "email": "adripons123@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "symfony/framework-bundle": "^5.4",
+        "symfony/console": "^5.4",
+        "symfony/dotenv": "^5.4"
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.36"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.3"
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "start": "symfony server:start --no-tls",
+        "stop": "symfony server:stop"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "5.4.*"
+        }
+    }
+}
