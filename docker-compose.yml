@@ -7,6 +7,9 @@ services:
       - '8010:80'
       - '8011:22'
     volumes:
+    # est ce que l'idée est de développer sous docker ? si non ça me parait bizarre de mapper ce repertoire
       - ./app:/app
+    # idem
       - ./front-end:/app/front-end
+    # encore plus idem, cette conf est deja dans l'image lors du build l'image docker, et la on vient l'écraser avec ce mapping
       - ./docker/nginx/default.conf:/etc/nginx/sites-enabled/default.conf
