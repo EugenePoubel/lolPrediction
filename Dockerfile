@@ -22,8 +22,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
 
 # Copier les fichiers du projet dans le conteneur
-##### cette ligne va changer a chaque fois que tu ajouteras du code
-##### donc tres souvent. Tout ce qui suit sera rejoué a chaque fois que cette ligne va changer,
+##### cette couche va changer a chaque fois que tu modifieras du code, donc tres souvent. 
+##### Toute les couches qui suivent seront recréées a chaque fois que cette couche va changer,
 ##### mets le plus haut possible tout ce qui ne change presque jamais, et le plus bas ce qui change tres souvent
 COPY . /app
 
