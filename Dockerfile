@@ -11,6 +11,7 @@ RUN mkdir /var/run/sshd
 RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 
 # Exposer le port SSH
+##### attention ce n'est qu'informatif, ça ne fait rien en fait, plutot mettre ça juste avant le ENTRYPOINT (a la fin)
 EXPOSE 22
 
 RUN echo 'root:root' | chpasswd
@@ -21,20 +22,28 @@ RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
 
 # Copier les fichiers du projet dans le conteneur
+##### cette couche va changer a chaque fois que tu modifieras du code, donc tres souvent. 
+##### Toute les couches qui suivent seront recréées a chaque fois que cette couche va changer,
+##### mets le plus haut possible tout ce qui ne change presque jamais, et le plus bas ce qui change tres souvent
 COPY . /app
 
+##### monter ces lignes avant le copy . ./app 
 # Installer les dépendances pour Symfony avec Composer
 WORKDIR /app/back-end
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer install --no-dev --optimize-autoloader
 
+##### idem, ici tu vas rejouer le npm install a chaque fois que tu changes une ligne de code, meme lorsque
+##### tes librairies ne changeront pas
 # Installer les dépendances pour React avec npm
 WORKDIR /app/front-end
 RUN npm install
 RUN npm run build
 
+##### monter ces lignes avant le copy . ./app 
 # Configurer Nginx pour servir l'application Symfony et React
 COPY docker/nginx/default.conf /etc/nginx/sites-enabled/default.conf
 
 # Lancer SSH
+##### utiliser ENTRYPOINT plutot, voir la doc docker
 CMD ["/usr/sbin/sshd", "-D"]
