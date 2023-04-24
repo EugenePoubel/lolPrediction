@@ -1,22 +1,28 @@
 {
-    "name": "eugenepoubel/lolprediction",
-    "description": "Prédiction de victoire d'une partie de lol avec de l'IA",
     "type": "project",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Adrien Pons",
-            "email": "adripons123@gmail.com"
-        }
-    ],
+    "license": "proprietary",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "require": {
-        "php": "^7.4 || ^8.0",
-        "symfony/framework-bundle": "^5.4",
-        "symfony/console": "^5.4",
-        "symfony/dotenv": "^5.4"
+        "php": ">=8.1",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "symfony/console": "6.2.*",
+        "symfony/dotenv": "6.2.*",
+        "symfony/flex": "^2",
+        "symfony/framework-bundle": "6.2.*",
+        "symfony/runtime": "6.2.*",
+        "symfony/yaml": "6.2.*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.36"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
@@ -28,20 +34,34 @@
             "App\\Tests\\": "tests/"
         }
     },
-    "config": {
-        "platform": {
-            "php": "7.4.3"
-        },
-        "sort-packages": true
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*"
     },
     "scripts": {
-        "start": "symfony server:start --no-tls",
-        "stop": "symfony server:stop"
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "conflict": {
+        "symfony/symfony": "*"
     },
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "5.4.*"
+            "require": "6.2.*"
         }
     }
 }
