@@ -2,6 +2,7 @@ import json
 import os
 import csv
 
+
 # définir une fonction récursive pour obtenir toutes les clés d'un objet JSON
 def obtenir_toutes_les_cles(objet_json, prefixe=''):
     liste_cles = []
@@ -64,19 +65,35 @@ nouvelle_liste_cles = [cle for cle in liste_toutes_cles if cle in cles_a_conserv
 print(nouvelle_liste_cles)
 
 # définir les en-têtes de colonnes
-en_tetes = ['gameDuration', 'Champion1_Name', 'Champion1_gold', 'Champion1_position', 'Champion2_Name', 'Champion2_gold', 'Champion2_position', 'Champion3_Name', 'Champion3_gold', 'Champion3_position', 'Champion4_Name', 'Champion4_gold', 'Champion4_position', 'Champion5_Name', 'Champion5_gold', 'Champion5_position', 'Champion6_Name', 'Champion6_gold', 'Champion6_position', 'Champion7_Name', 'Champion7_gold', 'Champion7_position', 'Champion8_Name', 'Champion8_gold', 'Champion8_position', 'Champion9_Name', 'Champion9_gold', 'Champion9_position', 'Champion10_Name', 'Champion10_gold', 'Champion10_position', 'Team1_baron_first', 'Team1_baron_kills', 'Team1_kill_first', 'Team1_kills', 'Team1_dragon_first', 'Team1_dragon_kills', 'Team1_inhibitor_first', 'Team1_inhibitor_kills', 'Team1_riftHerald_kills', 'Team1_tower_first', 'Team1_tower_kills', 'Team1_win', 'Team2_baron_first', 'Team2_baron_kills', 'Team2_champion_first', 'Team2_champion_kills', 'Team2_dragon_first', 'Team2_dragon_kills', 'Team2_inhibitor_first', 'Team2_inhibitor_kills', 'Team2_riftHerald_kills', 'Team2_tower_first', 'Team2_tower_kills', 'Team2_win']
+en_tetes = ['gameDuration', 'Champion1_Name', 'Champion1_gold', 'Champion1_position', 'Champion2_Name',
+            'Champion2_gold', 'Champion2_position', 'Champion3_Name', 'Champion3_gold', 'Champion3_position',
+            'Champion4_Name', 'Champion4_gold', 'Champion4_position', 'Champion5_Name', 'Champion5_gold',
+            'Champion5_position', 'Champion6_Name', 'Champion6_gold', 'Champion6_position', 'Champion7_Name',
+            'Champion7_gold', 'Champion7_position', 'Champion8_Name', 'Champion8_gold', 'Champion8_position',
+            'Champion9_Name', 'Champion9_gold', 'Champion9_position', 'Champion10_Name', 'Champion10_gold',
+            'Champion10_position', 'Team1_baron_first', 'Team1_baron_kills', 'Team1_kill_first', 'Team1_kills',
+            'Team1_dragon_first', 'Team1_dragon_kills', 'Team1_inhibitor_first', 'Team1_inhibitor_kills',
+            'Team1_riftHerald_kills', 'Team1_tower_first', 'Team1_tower_kills', 'Team2_baron_first',
+            'Team2_baron_kills', 'Team2_champion_first', 'Team2_champion_kills', 'Team2_dragon_first',
+            'Team2_dragon_kills', 'Team2_inhibitor_first', 'Team2_inhibitor_kills', 'Team2_riftHerald_kills',
+            'Team2_tower_first', 'Team2_tower_kills', 'Team1_win']
+
 
 # ouvrir le fichier CSV en mode écriture
-#with open('dataset.csv', 'w', newline='') as f:
-    # créer un écrivain CSV
-#    writer = csv.writer(f)
+def entete():
+    with open('dataset.csv', 'w', newline='') as f:
+        # créer un écrivain CSV
+        writer = csv.writer(f)
 
-    # écrire les en-têtes de colonnes
-#    writer.writerow(en_tetes)
+        # écrire les en-têtes de colonnes
+        writer.writerow(en_tetes)
+
+
+#entete()
 
 # définir le chemin du dossier contenant les fichiers à traiter
-chemin_dossier = 'D:\COURS\Projet\Dataset\datasets\scraped\grandmaster\games'
-# chemin_dossier = 'D:\COURS\Projet\Dataset\datasets\scraped\challenger\games'
+#chemin_dossier = 'D:\COURS\Projet\Dataset\datasets\scraped\grandmaster\games'
+chemin_dossier = 'D:\COURS\Projet\Dataset\datasets\scraped\challenger\games'
 
 # récupérer la liste des fichiers dans le dossier
 liste_fichiers = os.listdir(chemin_dossier)
@@ -106,7 +123,7 @@ for fichier in liste_fichiers:
         liste_donnees.append(data['info']['teams'][i]['objectives']['riftHerald']['kills'])
         liste_donnees.append(data['info']['teams'][i]['objectives']['tower']['first'])
         liste_donnees.append(data['info']['teams'][i]['objectives']['tower']['kills'])
-        liste_donnees.append(data['info']['teams'][i]['win'])
+    liste_donnees.append(data['info']['teams'][0]['win'])
     # ouvrir le fichier CSV en mode écriture
     with open('dataset.csv', 'a', newline='') as f:
         # créer un écrivain CSV
