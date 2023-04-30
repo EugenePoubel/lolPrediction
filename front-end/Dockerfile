@@ -1,13 +1,10 @@
-FROM node:16-alpine
+FROM nginx:alpine
 
-WORKDIR /front-end
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
-COPY /front-end /front-end
-
-RUN yarn install && \
-    yarn build
+COPY back-end/public /back-end/public
+COPY front-end/ /front-end
 
 EXPOSE 80
 
-CMD ["yarn", "start"]
-
+CMD ["nginx", "-g", "daemon off;"]
