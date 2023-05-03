@@ -1,0 +1,28 @@
+body {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color:  rgba(66, 133, 244, 1);
+}
+
+
+.prediction-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 16px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+}
+
+.prediction-container .advanced-options-container {
+    transition: all 0.3s ease;
+    max-height: 0;
+    overflow: hidden;
+
+}
+
+.prediction-container .advanced-options-container.advanced-options-visible {
+    max-height: 1000px;
+}
+
