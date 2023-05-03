@@ -1,3 +1,5 @@
+from time import sleep
+
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
@@ -10,8 +12,8 @@ def url():
     response = requests.get(
         url='https://proxy.scrapeops.io/v1/',
         params={
-            'api_key': 'ea786521-3bc8-4901-b362-d554db6abdb7',
-            'url': 'https://www.leagueofgraphs.com/fr/champions/counters',
+            'api_key': 'da78eeed-d20b-4c01-a7b2-bb30c6602ab8',
+            'url': 'https://www.leagueofgraphs.com/en/champions/counters',
         },
     )
     # Vérifie que la requête a fonctionné
@@ -29,15 +31,14 @@ def url():
 
 
 def data():
-
     with open('urls.txt', 'r') as file:
-        outf = pd.read_csv('Strong_against.csv')
         for row in file:
+            outf = pd.read_csv('Strong_against.csv')
             url = row.strip()
             response = requests.get(
                 url='https://proxy.scrapeops.io/v1/',
                 params={
-                    'api_key': 'ea786521-3bc8-4901-b362-d554db6abdb7',
+                    'api_key': 'da78eeed-d20b-4c01-a7b2-bb30c6602ab8',
                     'url': url,
                 },
             )
@@ -45,18 +46,48 @@ def data():
                 soup = BeautifulSoup(response.text, 'html.parser')
                 div = soup.find('div', {'class': 'txt'})
                 Champ = div.find('h2').text
+                # Cas particuliers
+                if Champ == 'Renata Glasc':
+                    Champ = 'Renata'
+                if Champ == 'Dr. Mundo':
+                    Champ = 'DrMundo'
+                if Champ == 'Wukong':
+                    Champ = 'MonkeyKing'
+                if Champ == 'Nunu & Willump':
+                    Champ = 'Nunu'
+                if Champ == 'Cho\'Gath':
+                    Champ = 'Chogath'
+                if Champ == 'Fiddlesticks':
+                    Champ = 'FiddleSticks'
+                Champ = Champ.replace('\'', '')
+                Champ = Champ.replace(' ', '')
                 table = soup.find('table', {'class': 'data_table sortable_table'})
                 trs = table.findAll('tr', {'class': ''})
                 for i in range(1, len(trs)):
                     tds = trs[i].findAll('td')
                     valeur = tds[1].get('data-sort-value')
                     nom = trs[i].find('span', {'class': 'name'}).text
+                    # Cas particuliers
+                    if nom == 'Renata Glasc':
+                        nom = 'Renata'
+                    if nom == 'Wukong':
+                        nom = 'MonkeyKing'
+                    if nom == 'Dr. Mundo':
+                        nom = 'DrMundo'
+                    if nom == 'Nunu & Willump':
+                        nom = 'Nunu'
+                    if nom == 'Cho\'Gath':
+                        nom = 'Chogath'
+                    if nom == 'Fiddlesticks':
+                        nom = 'FiddleSticks'
+                    nom = nom.replace('\'', '')
+                    nom = nom.replace(' ', '')
                     # Find the row(s) where Strong_against is equal to Champ
-                    champ_rows = outf.loc[outf['Strong_against'] == Champ.replace(',', '')]
+                    champ_rows = outf.loc[outf['Strong_against'] == Champ.replace('\'', '')]
                     # Modify the value
-                    outf.loc[champ_rows.index, nom] = valeur
-                    #print(str(Champ)+' fort contre : ' + str(nom) + ' valeur : ' + str(valeur))
-        outf.to_csv('Strong_against.csv', index=False)
+                    outf.loc[champ_rows.index, nom.replace('\'', '')] = valeur
+                    print(str(Champ)+' fort contre : ' + str(nom) + ' valeur : ' + str(valeur))
+            outf.to_csv('Strong_against.csv', index=False)
 
 
 def csvStrong():
@@ -129,8 +160,12 @@ def ajoutMilioligne():
     # Write the updated dataframe to the CSV file
     new_data.to_csv('Strong_against.csv', index=False)
 
+
 def reset():
     csvStrong()
     ajoutMilioCol()
     ajoutNom()
     ajoutMilioligne()
+
+
+
