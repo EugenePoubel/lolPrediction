@@ -1,28 +1,49 @@
 body {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-color:  rgba(66, 133, 244, 1);
+    background-color: #091428;
+    color: #A09B8C;
+    font-family: 'Arial', sans-serif;
 }
 
+.primary-button {
+    background-color: #0AC8B9;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
 
-.prediction-container {
-    max-width: 800px;
-    margin: 0 auto;
+.primary-button:hover {
+    background-color: #0397AB;
+}
+
+.secondary-button {
+    background-color: transparent;
+    color: #0AC8B9;
+    border: 2px solid #0AC8B9;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.secondary-button:hover {
+    background-color: #0AC8B9;
+    color: #FFFFFF;
+}
+
+.gradient-background {
+    background: linear-gradient(#785A28, #C89B3C);
+    color: #FFFFFF;
     padding: 16px;
-    background-color: white;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
 }
 
-.prediction-container .advanced-options-container {
-    transition: all 0.3s ease;
-    max-height: 0;
-    overflow: hidden;
-
+.gradient-border {
+    border: 4px solid transparent;
+    background-clip: padding-box;
+    background-image: linear-gradient(#785A28, #C89B3C);
+    padding: 16px;
 }
-
-.prediction-container .advanced-options-container.advanced-options-visible {
-    max-height: 1000px;
-}
-

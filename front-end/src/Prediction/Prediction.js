@@ -1,7 +1,9 @@
 // Importer les modules et composants nécessaires
 import React, { useState } from 'react';
 import champions from '../data/champions.json';
-import './Prediction.css';
+import {StyledContainer, StyledAutocomplete,StyledTextField} from "./Prediction-style";
+import "./Prediction.css";
+import theme from '../theme.js'
 // Importer les composants Material UI
 import {
     LinearProgress,
@@ -18,7 +20,8 @@ import {
     Select,
     InputLabel,
     FormControl,
-    Fab
+    Fab,
+    Paper
 } from '@mui/material';
 
 import { useNavigate } from 'react-router-dom';
@@ -26,13 +29,7 @@ import { useNavigate } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import AddIcon from "@mui/icons-material/Add";
 
-const theme = createTheme({
-    palette: {
-        text: {
-            primary: 'rgba(66, 133, 244, 1)',
-        },
-    },
-});
+
 
 function Prediction() {
     const navigate = useNavigate();
@@ -116,32 +113,35 @@ function Prediction() {
             </Fab>
             <Typography variant="h1"
                         style={{
-                            fontSize: '3em',
+                            fontSize: '2vw', // Remplacez '3em' par '3vw'
                             fontWeight: 'bold',
-                            color: 'white',
                             marginBottom: '20px',
                             textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'
                         }}
                         gutterBottom>
                 Prédiction de partie
             </Typography>
-        <Container className="prediction-container">
+            <StyledContainer>
             {/* Grille pour afficher les champions et les options */}
-            <Grid container spacing={2} justifyContent="center">
-                <Grid item xs={12} md={6}>
-                    <Typography variant="h5" gutterBottom>
+            <Grid container spacing={2} justifyContent="center"  >
+                <Grid item xs={12} md={4}>
+                    <Typography variant="h5" gutterBottom >
                         Equipe 1
                     </Typography>
                     {team1.map((champion, index) => (
-                        <Autocomplete
+                        <StyledAutocomplete
+                            size={"small"}
                             key={index}
                             options={champions}
                             getOptionLabel={(champion) => champion.name}
+                            PaperComponent={({ children }) => (
+                                <Paper>{children}</Paper>
+                            )}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
                                     label={`Champion ${index + 1}`}
-                                    variant="outlined"
+                                    variant="filled"
                                 />
                             )}
                             value={champion}
@@ -152,16 +152,17 @@ function Prediction() {
                                     ...team1.slice(index + 1),
                                 ])
                             }
-                            sx={{ marginBottom: '16px' }}
+                            sx={{ marginBottom: '16px'}}
                         />
                     ))}
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={4}>
                     <Typography variant="h5" gutterBottom>
                         Equipe 2
                     </Typography>
                     {team2.map((champion, index) => (
-                        <Autocomplete
+                        <StyledAutocomplete
+                            size={"small"}
                             key={index}
                             options={champions}
                             getOptionLabel={(champion) => champion.name}
@@ -169,7 +170,7 @@ function Prediction() {
                                 <TextField
                                     {...params}
                                     label={`Champion ${index + 1}`}
-                                    variant="outlined"
+                                    variant="filled"
                                 />
                             )}
                             value={champion}
@@ -209,28 +210,29 @@ function Prediction() {
                 </Grid>
             </Box>
             {/* Conteneur pour les options avancées */}
-            <Box mb={4}>
+            <Box mb={4} >
 
                 <div
                     className={`advanced-options-container${
                         showAdvancedOptions ? ' advanced-options-visible' : ''
                     }`}
                 >
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h5" gutterBottom>
                         Options avancées
                     </Typography>
 
                     <Grid container spacing={2}>
                         {Object.keys(advancedOptions).map((option) => (
-                            <Grid item xs={12} sm={6} md={4} key={option}>
-                                <TextField
+                            <Grid item xs={12} sm={7} md={3} key={option}>
+                                <StyledTextField
+                                    size={"small"}
                                     label={option}
                                     value={advancedOptions[option]}
                                     onChange={(event) =>
                                         handleAdvancedOptionChange(option, event.target.value)
                                     }
                                     fullWidth
-                                    variant="outlined"
+                                    variant="filled"
                                     margin="normal"
                                 />
                             </Grid>
@@ -238,6 +240,7 @@ function Prediction() {
                     </Grid>
                 </div>
             </Box>
+            </StyledContainer>
             {/* Sélecteurs pour choisir la version du modèle et l'ELO */}
             <Box sx={{ position: 'absolute', bottom: 16, left: 16 }} className="prediction-container">
                 <Grid container spacing={2}>
@@ -334,9 +337,6 @@ function Prediction() {
                     </Typography>
                 </Box>
             </Box>
-
-
-        </Container>
         </ThemeProvider>
     );
 }
