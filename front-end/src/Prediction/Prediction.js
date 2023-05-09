@@ -70,13 +70,36 @@ function Prediction() {
     };
 
     const handleSubmit = () => {
-        console.log('Submit prediction with the following data:', {
+        const requestData = {
             team1,
             team2,
-            advancedOptions,
-        });
-        // Envoyer les données pour prédire la partie
+            ...advancedOptions,
+        };
+
+        fetch('/api/winrate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Winrate data:', data);
+                // Ici, vous pouvez traiter les données de winrate
+                // Par exemple, vous pouvez mettre à jour la barre de progression
+                setProgressValue(data.winrate);
+            })
+            .catch((error) => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
     };
+
 
     const [modelVersion, setModelVersion] = useState('V1');
     const [elo, setElo] = useState('Platinium+');
