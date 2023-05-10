@@ -32,23 +32,35 @@ import AddIcon from "@mui/icons-material/Add";
 
 
 function Prediction() {
+    const allChampions = champions;
     const navigate = useNavigate();
     const [team1, setTeam1] = useState(Array(5).fill(null));
     const [team2, setTeam2] = useState(Array(5).fill(null));
     const [advancedOptions, setAdvancedOptions] = useState({
         gameDuration: '',
-        team1BaronKills: '',
-        team2BaronKills: '',
-        team1Kills: '',
-        team2Kills: '',
-        team1Towers: '',
-        team2Towers: '',
-        team1Dragons: '',
-        team2Dragons: '',
-        team1Inhibitors: '',
-        team2Inhibitors: '',
-        team1Heralds: '',
-        team2Heralds: '',
+        Team1_baron_first:'',
+        Team1_baron_kills: '',
+        Team1_kill_first: '',
+        Team1_kills: '',
+        Team1_dragon_first: '',
+        Team1_dragon_kills: '',
+        Team1_inhibitor_first: '',
+        Team1_inhibitor_kills: '',
+        Team1_riftHerald_kills: '',
+        Team1_tower_first: '',
+        Team1_tower_kills: '',
+        Team2_baron_first: '',
+        Team2_baron_kills: '',
+        Team2_champion_first: '',
+        Team2_champion_kills: '',
+        Team2_dragon_first: '',
+        Team2_dragon_kills: '',
+        Team2_inhibitor_first: '',
+        Team2_inhibitor_kills: '',
+        Team2_riftHerald_kills: '',
+        Team2_tower_first: '',
+        Team2_tower_kills: '',
+
     });
     const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
@@ -70,9 +82,17 @@ function Prediction() {
     };
 
     const handleSubmit = () => {
+        // Vérifie que tous les champs de l'équipe sont remplis
+        if (team1.some(champ => champ === null) || team2.some(champ => champ === null)) {
+            // Si tous les champs ne sont pas remplis, affiche une alerte et retourne
+            alert('Veuillez sélectionner les champions pour chaque équipe.');
+            return;
+        }
+
+
         const requestData = {
-            team1,
-            team2,
+            team1: team1.map(champion => champion.name),
+            team2: team2.map(champion => champion.name),
             ...advancedOptions,
         };
 
@@ -116,10 +136,11 @@ function Prediction() {
     };
 
 
+
     return (
         <ThemeProvider theme={theme}>
             <Fab
-                color="white"
+                  color= "rgb(240, 230, 210)"
                   aria-label="add"
                   onClick={handleBackClick}
                   sx={{
@@ -130,7 +151,6 @@ function Prediction() {
                 <ChevronLeftIcon
                     sx={{
                         fontSize: '2rem', // Ajustez la taille de l'icône ici
-                        color: 'rgba(66, 133, 244, 1)',
                     }}
                 />
             </Fab>
@@ -155,13 +175,27 @@ function Prediction() {
                         <StyledAutocomplete
                             size={"small"}
                             key={index}
-                            options={champions}
+                            //Provoque un Warning a cause de la façon dont AutoComplete est implémenté voir : https://github.com/mui/material-ui/issues/29727
+                            options={champions.filter(
+                                (champ) => !team1.includes(champ) && !team2.includes(champ)
+                            )}
+
                             getOptionLabel={(champion) => champion.name}
+                            isOptionEqualToValue={(option, value) => {
+                                return option.name === value.name;
+                            }}
+                            renderOption={(props, option, { selected }) => (
+                                <Box component="li" {...props}>
+                                    <img src={option.icon} alt={option.name} style={{ marginRight: '10px', height: '25px', width: '25px' }} />
+                                    {option.name}
+                                </Box>
+                            )}
                             PaperComponent={({ children }) => (
                                 <Paper>{children}</Paper>
                             )}
                             renderInput={(params) => (
                                 <TextField
+                                    required={true}
                                     {...params}
                                     label={`Champion ${index + 1}`}
                                     variant="filled"
@@ -175,6 +209,7 @@ function Prediction() {
                                     ...team1.slice(index + 1),
                                 ])
                             }
+                            filterSelectedOptions
                             sx={{ marginBottom: '16px'}}
                         />
                     ))}
@@ -187,10 +222,24 @@ function Prediction() {
                         <StyledAutocomplete
                             size={"small"}
                             key={index}
-                            options={champions}
+                            //Provoque un Warning a cause de la façon dont AutoComplete est implémenté voir : https://github.com/mui/material-ui/issues/29727
+                            options={champions.filter(
+                                (champ) => !team1.includes(champ) && !team2.includes(champ)
+                            )}
+                            filterSelectedOptions
+                            isOptionEqualToValue={(option, value) => {
+                                return option.name === value.name;
+                            }}
                             getOptionLabel={(champion) => champion.name}
+                            renderOption={(props, option, { selected }) => (
+                                <Box component="li" {...props}>
+                                    <img src={option.icon} alt={option.name} style={{ marginRight: '10px', height: '25px', width: '25px' }} />
+                                    {option.name}
+                                </Box>
+                            )}
                             renderInput={(params) => (
                                 <TextField
+                                    required={true}
                                     {...params}
                                     label={`Champion ${index + 1}`}
                                     variant="filled"
@@ -246,7 +295,7 @@ function Prediction() {
 
                     <Grid container spacing={2}>
                         {Object.keys(advancedOptions).map((option) => (
-                            <Grid item xs={12} sm={7} md={3} key={option}>
+                            <Grid item xs={10} sm={7} md={3} key={option}>
                                 <StyledTextField
                                     size={"small"}
                                     label={option}
@@ -308,23 +357,23 @@ function Prediction() {
                 // Crée un conteneur Box positionné en bas et centré horizontalement sur la page.
                 sx={{
                     position: 'fixed',
-                    bottom: '20px',
+                    bottom: '2vh', // 2% of the viewport height
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    padding: 1,
+                    padding: '1vh', // 1% of the viewport height
                     backgroundColor: 'white',
-                    borderRadius: '4px',
+                    borderRadius: '0.5vh', // 0.5% of the viewport height
                 }}
             >
                 <Box
                     // Crée une Box pour la barre de progression, avec une largeur de 50% et une largeur minimale de 1000px.
                     sx={{
                         position: 'relative',
-                        width: '50%',
-                        minWidth: '1000px',
-                        height: '24px',
+                        width: '50vw', // 50% of the viewport width
+                        minWidth: '50vw', // 50% of the viewport width
+                        height: '2vh', // 2% of the viewport height
                         backgroundColor: 'white',
-                        borderRadius: '4px',
+                        borderRadius: '0.5vh', // 0.5% of the viewport height
                         overflow: 'hidden',
                     }}
                 >
