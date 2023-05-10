@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 import numpy as np
 
 # Création de la liste pour stocker les noms uniques
@@ -27,3 +28,11 @@ for i in champions:
         matrice[i][j] = 0
 
 print(matrice['Aatrox']['Ezreal'])
+
+# Charger le fichier CSV
+df = pd.read_csv("dataset_Categories.csv")
+
+# Récupérer les noms de colonnes
+noms_colonnes = df.columns.tolist()
+
+print(noms_colonnes)
