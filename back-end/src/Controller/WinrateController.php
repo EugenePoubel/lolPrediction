@@ -1,31 +1,37 @@
 <?php
-
 namespace App\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
 
-class WinrateController
+class WinrateController extends AbstractController
 {
-    #[Route('/api/winrate', name: 'calculate_winrate', methods: ['POST'])]
-    public function calculateWinrate(Request $request): JsonResponse
-    {
-        // Récupération du contenu de la requête
-        $data = json_decode($request->getContent(), true);
 
-        // Vérification des données reçues
-        if (!isset($data['team1'], $data['team2'])) {
-            return new JsonResponse(['error' => 'Invalid data'], 400);
-        }
+#[Route('/api/winrate', name: 'calculate_winrate', methods: ['POST'])]
+public function calculateWinrate(Request $request): JsonResponse
+{
+$data = json_decode($request->getContent(), true);
 
-        // Ici, vous pouvez utiliser vos données pour calculer les winrates
-        // Pour l'instant, je vais juste retourner les champions de chaque équipe
+$championsTeam1 = implode(',', $data['team1']); // Assuming this is an array
+$championsTeam2 = implode(',', $data['team2']); // Assuming this is an array
 
-        $response = [
-            'team1Champions' => $data['team1'],
-            'team2Champions' => $data['team2'],
-        ];
-        return new JsonResponse($response);
-    }
+$advancedOptions = $data['advancedOptions']; // Assuming this is an associative array
+
+$process = new Process(['/data/lolprediction-docker/miniconda/back-end/bin/python3', 'Script/test.py', $championsTeam1, $championsTeam2, json_encode($advancedOptions)]);
+$process->run();
+
+// Executes after the command finishes
+if (!$process->isSuccessful()) {
+throw new ProcessFailedException($process);
+}
+
+$output = $process->getOutput();
+$winrate = json_decode($output, true); // Assuming your Python script returns JSON
+
+return new JsonResponse($output);
+}
 }
