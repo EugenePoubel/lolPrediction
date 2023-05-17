@@ -29,6 +29,11 @@ function Home() {
         navigate('/prediction');
     };
 
+    // Gestion de la navigation vers la page de Draft
+    const handleDraftClick = () => {
+        navigate('/draft');
+    };
+
     // Il y a 196 vidéo
     const handleNextVideo = () => {
         setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % 196);
@@ -102,6 +107,19 @@ function Home() {
                 }}
             >
                 Mode Custom
+            </Button>
+            <Button
+                variant="contained"
+                className="custom-mode-button"
+                onClick={handleDraftClick}
+                style={{
+                    position: 'fixed',
+                    bottom: '20px',
+                    right: '200px',
+                    zIndex: 1000
+                }}
+            >
+                Mode Draft
             </Button>
 
         </div>

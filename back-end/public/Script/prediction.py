@@ -12,10 +12,17 @@ def main():
     import pandas as pd
     # Vérification des arguments
     if len(sys.argv) != 4:
-        print("Usage: python prediction.py Team1 Team2 AdvancedFeatures")
+        #print("Usage: python prediction.py Team1 Team2 AdvancedFeatures")
         return
     # Charger le fichier CSV
-    df = pd.read_csv("dataset_Categories.csv")
+    df = pd.read_csv("Script/dataset_Categories.csv")
+
+    # Affichage des arguments
+    #print(f"Team 1: {sys.argv[1]}")
+    #print(f"Team 2: {sys.argv[2]}")
+    #print(f"Advanced Features 1: {sys.argv[3]}")
+
+
     # Récupérer les noms de colonnes
     noms_colonnes = df.columns.tolist()
     noms_colonnes.remove('Team1_win')
@@ -115,7 +122,7 @@ def main():
             optimizer.step()
 
         # Afficher la perte moyenne pour l'époque actuelle
-        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item():.4f}")
+        #print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item():.4f}")
 
     # Évaluer le modèle sur les données de test
     model.eval()
@@ -142,7 +149,7 @@ def main():
 
     # Afficher l'exactitude du modèle sur les données de test
     accuracy = 100 * correct / total
-    print(f"Accuracy: {accuracy:.2f}%")
+    #print(f"Accuracy: {accuracy:.2f}%")
 
     model.eval()
     # Convertir l'entrée en un tenseur PyTorch et ajouter une dimension supplémentaire pour simuler un lot de taille 1

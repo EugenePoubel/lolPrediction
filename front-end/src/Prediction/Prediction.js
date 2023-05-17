@@ -21,7 +21,8 @@ import {
     InputLabel,
     FormControl,
     Fab,
-    Paper
+    Paper,
+    CircularProgress
 } from '@mui/material';
 
 import { useNavigate } from 'react-router-dom';
@@ -65,6 +66,9 @@ function Prediction() {
     const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
 
+    const [isLoading, setIsLoading] = useState(false);
+
+
     const handleTeam1Change = (index, value) => {
         setTeam1(value);
     };
@@ -82,6 +86,7 @@ function Prediction() {
     };
 
     const handleSubmit = () => {
+        setIsLoading(true);
         // Vérifie que tous les champs de l'équipe sont remplis
         if (team1.some(champ => champ === null) || team2.some(champ => champ === null)) {
             // Si tous les champs ne sont pas remplis, affiche une alerte et retourne
@@ -93,7 +98,10 @@ function Prediction() {
         const requestData = {
             team1: team1.map(champion => champion.name),
             team2: team2.map(champion => champion.name),
-            ...advancedOptions,
+            advancedOptions: Object.fromEntries(
+                Object.entries(advancedOptions)
+                    .filter(([key, value]) => value !== '')
+            ),
         };
 
         fetch('/api/winrate', {
@@ -113,11 +121,16 @@ function Prediction() {
                 console.log('Winrate data:', data);
                 // Ici, vous pouvez traiter les données de winrate
                 // Par exemple, vous pouvez mettre à jour la barre de progression
-                setProgressValue(data.winrate);
+                setProgressValue(Math.round(data.probability *100));
             })
             .catch((error) => {
                 console.error('There has been a problem with your fetch operation:', error);
+            })
+            .finally(() => {
+                // Définir isLoading comme false lorsque la requête est terminée, que ce soit avec succès ou en cas d'échec
+                setIsLoading(false);
             });
+
     };
 
 
@@ -405,7 +418,12 @@ function Prediction() {
                         }}
                     >
                         {/* Affiche "En attente..." si la valeur de la progression est 0, sinon affiche le score de prédiction */}
-                        {progressValue === 0 ? 'En attente...' : `${progressValue}%`}
+                        {        isLoading
+                            ? <CircularProgress size={20} />
+                            : progressValue === 0
+                                ? 'En attente...'
+                                : `${progressValue}%`
+                        }
                     </Typography>
                 </Box>
             </Box>
