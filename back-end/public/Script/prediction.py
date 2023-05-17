@@ -12,30 +12,24 @@ def main():
     import pandas as pd
     # Vérification des arguments
     if len(sys.argv) != 4:
-        #print("Usage: python prediction.py Team1 Team2 AdvancedFeatures")
+        print("Usage: python prediction.py Team1 Team2 AdvancedFeatures")
         return
     # Charger le fichier CSV
-    df = pd.read_csv("Script/dataset_Categories.csv")
-
-    # Affichage des arguments
-    #print(f"Team 1: {sys.argv[1]}")
-    #print(f"Team 2: {sys.argv[2]}")
-    #print(f"Advanced Features 1: {sys.argv[3]}")
-
-
+    df = pd.read_csv("dataset_Categories.csv")
     # Récupérer les noms de colonnes
-    noms_colonnes = df.columns.tolist()
-    noms_colonnes.remove('Team1_win')
-    # Création de la matrice vide
-    matrice = {}
-    for i in noms_colonnes:
-        matrice[i] = 0
+    noms_colonnes = df.columns.tolist()[24:]
     Champ1 = sys.argv[1]
     Champ1 = Champ1.split(",")
     Champ2 = sys.argv[2]
     Champ2 = Champ2.split(",")
     AdvancedFeatures = sys.argv[3]
     AdvancedFeatures = json.loads(AdvancedFeatures)
+    # Création de la matrice vide
+    matrice = {}
+    for i in noms_colonnes:
+        matrice[i] = 0
+
+
     for i in Champ1:
         matrice['Team1_' + i] = 1
     for i in Champ2:
@@ -97,7 +91,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     loss_fn = torch.nn.BCEWithLogitsLoss()
 
-    num_epochs = 15
+    num_epochs = 7
 
     # Boucle d'entraînement
     for epoch in range(num_epochs):
@@ -149,7 +143,7 @@ def main():
 
     # Afficher l'exactitude du modèle sur les données de test
     accuracy = 100 * correct / total
-    #print(f"Accuracy: {accuracy:.2f}%")
+    print(f"Accuracy: {accuracy:.2f}%")
 
     model.eval()
     # Convertir l'entrée en un tenseur PyTorch et ajouter une dimension supplémentaire pour simuler un lot de taille 1
@@ -167,9 +161,7 @@ def main():
 
     # Convertir la probabilité en classe en utilisant un seuil (par exemple, 0,5)
     predicted_class = 1 if probability >= 0.5 else 0
-    result = {"probability": probability, "predicted_class": predicted_class}
+    result = {"probability": probability, "predicted_class": predicted_class, "Accuracy": accuracy}
     result_json = json.dumps(result)
     print(result_json)
-
-
 main()
