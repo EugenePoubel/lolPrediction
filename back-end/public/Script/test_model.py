@@ -4,6 +4,7 @@ import sys
 import numpy as np
 import torch
 from pytorchModel import MyModel
+from pytorchModel import accuracy
 
 # Créez une nouvelle instance du modèle avec la même architecture
 loaded_model = MyModel(input_size=347)
@@ -61,7 +62,7 @@ def main():
 
     # Convertir la probabilité en classe en utilisant un seuil
     predicted_class = 1 if probability >= 0.5 else 0
-    result = {"probability": probability, "predicted_class": predicted_class}
+    result = {"probability": probability, "predicted_class": predicted_class, "Accuracy": accuracy}
     result_json = json.dumps(result)
     print(result_json)
 
