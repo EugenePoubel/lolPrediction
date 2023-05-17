@@ -18,18 +18,15 @@ def main():
     df = pd.read_csv("dataset_Categories.csv")
     # Récupérer les noms de colonnes
     noms_colonnes = df.columns.tolist()[24:]
-    print(noms_colonnes)
     Champ1 = sys.argv[1]
     Champ1 = Champ1.split(",")
     Champ2 = sys.argv[2]
     Champ2 = Champ2.split(",")
     AdvancedFeatures = sys.argv[3]
     AdvancedFeatures = json.loads(AdvancedFeatures)
-    print(AdvancedFeatures)
     # Création de la matrice vide
     matrice = {}
     for i in noms_colonnes:
-        print(i)
         matrice[i] = 0
 
 
@@ -49,13 +46,11 @@ def main():
     # Garder les colonnes qui sont fournie
     # Liste des features à conserver
     features_list = list(matrice.keys())
-    print(matrice.keys())
     features_list.append('Team1_win')
 
     # Supprimer les colonnes qui ne sont pas dans la liste de features
     df = df.drop([col for col in df.columns if col not in features_list], axis=1)
     nbrFeatures = len(df.columns)-1
-    print(nbrFeatures)
 
     # Séparer les features de la variable cible
     X = df.drop('Team1_win', axis=1).values
@@ -121,7 +116,7 @@ def main():
             optimizer.step()
 
         # Afficher la perte moyenne pour l'époque actuelle
-        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item():.4f}")
+        #print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item():.4f}")
 
     # Évaluer le modèle sur les données de test
     model.eval()
@@ -166,7 +161,7 @@ def main():
 
     # Convertir la probabilité en classe en utilisant un seuil (par exemple, 0,5)
     predicted_class = 1 if probability >= 0.5 else 0
-    result = {"probability": probability, "predicted_class": predicted_class}
+    result = {"probability": probability, "predicted_class": predicted_class, "Accuracy": accuracy}
     result_json = json.dumps(result)
     print(result_json)
 
