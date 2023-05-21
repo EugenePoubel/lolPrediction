@@ -164,4 +164,6 @@ def main():
     result = {"probability": probability, "predicted_class": predicted_class, "Accuracy": accuracy}
     result_json = json.dumps(result)
     print(result_json)
+
+
 main()
