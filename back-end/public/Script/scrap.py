@@ -1,9 +1,11 @@
-from time import sleep
-
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import requests
 import pandas as pd
 import csv
+import json
 
 
 # Récupération des liens des champions
@@ -92,66 +94,60 @@ def data_Strong():
 
 def data_Good():
     with open('urls.txt', 'r') as file:
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service)
         for row in file:
-            outf = pd.read_csv('Strong_against.csv')
-            url = row.strip()
-            response = requests.get(
-                url='https://proxy.scrapeops.io/v1/',
-                params={
-                    'api_key': 'da78eeed-d20b-4c01-a7b2-bb30c6602ab8',
-                    'url': url,
-                },
-            )
-            if response.ok:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                div = soup.find('div', {'class': 'txt'})
-                Champ = div.find('h2').text
+            outf = pd.read_csv('Good_with.csv')
+            driver.get(row)
+            # Selenium attend que la page se charge complètement
+            response = driver.page_source
+            soup = BeautifulSoup(response, 'html.parser')
+            div = soup.find('div', {'class': 'txt'})
+            Champ = div.find('h2').text
+            # Cas particuliers
+            if Champ == 'Renata Glasc':
+                Champ = 'Renata'
+            if Champ == 'Dr. Mundo':
+                Champ = 'DrMundo'
+            if Champ == 'Wukong':
+                Champ = 'MonkeyKing'
+            if Champ == 'Nunu & Willump':
+                Champ = 'Nunu'
+            if Champ == 'Cho\'Gath':
+                Champ = 'Chogath'
+            if Champ == 'Fiddlesticks':
+                Champ = 'FiddleSticks'
+            Champ = Champ.replace('\'', '')
+            Champ = Champ.replace(' ', '')
+            table = soup.findAll('table', {'class': 'data_table sortable_table'})
+            trs = table[2].findAll('tr', {'class': ''})
+            for i in range(1, len(trs)):
+                tds = trs[i].findAll('td')
+                valeur = tds[1].find('div', {'class': 'progressBarTxt'}).text
+                valeur = valeur.replace('%', '')
+                valeur = valeur.replace('+', '')
+                nom = trs[i].find('span', {'class': 'name'}).text
                 # Cas particuliers
-                if Champ == 'Renata Glasc':
-                    Champ = 'Renata'
-                if Champ == 'Dr. Mundo':
-                    Champ = 'DrMundo'
-                if Champ == 'Wukong':
-                    Champ = 'MonkeyKing'
-                if Champ == 'Nunu & Willump':
-                    Champ = 'Nunu'
-                if Champ == 'Cho\'Gath':
-                    Champ = 'Chogath'
-                if Champ == 'Fiddlesticks':
-                    Champ = 'FiddleSticks'
-                Champ = Champ.replace('\'', '')
-                Champ = Champ.replace(' ', '')
-                table = soup.findAll('table', {'class': 'data_table sortable_table'})
-                trs = table[2].findAll('tr', {'class': ''})
-                print(trs)
-                for i in range(1, len(trs)):
-                    tds = trs[i].findAll('td')
-                    print(len(tds))
-                    valeur = tds[1].find('div', {'class': 'progressBarTxt'}).text
-                    valeur = valeur.replace('%', '')
-                    valeur = valeur.replace('+', '')
-                    nom = trs[i].find('span', {'class': 'name'}).text
-                    # Cas particuliers
-                    if nom == 'Renata Glasc':
-                        nom = 'Renata'
-                    if nom == 'Wukong':
-                        nom = 'MonkeyKing'
-                    if nom == 'Dr. Mundo':
-                        nom = 'DrMundo'
-                    if nom == 'Nunu & Willump':
-                        nom = 'Nunu'
-                    if nom == 'Cho\'Gath':
-                        nom = 'Chogath'
-                    if nom == 'Fiddlesticks':
-                        nom = 'FiddleSticks'
-                    nom = nom.replace('\'', '')
-                    nom = nom.replace(' ', '')
-                    # Find the row(s) where Strong_against is equal to Champ
-                    champ_rows = outf.loc[outf['Strong_against'] == Champ.replace('\'', '')]
-                    # Modify the value
-                    outf.loc[champ_rows.index, nom.replace('\'', '')] = valeur
-                    print(str(Champ) + ' fort avec : ' + str(nom) + ' valeur : ' + str(valeur))
-            outf.to_csv('Strong_against.csv', index=False)
+                if nom == 'Renata Glasc':
+                    nom = 'Renata'
+                if nom == 'Wukong':
+                    nom = 'MonkeyKing'
+                if nom == 'Dr. Mundo':
+                    nom = 'DrMundo'
+                if nom == 'Nunu & Willump':
+                    nom = 'Nunu'
+                if nom == 'Cho\'Gath':
+                    nom = 'Chogath'
+                if nom == 'Fiddlesticks':
+                    nom = 'FiddleSticks'
+                nom = nom.replace('\'', '')
+                nom = nom.replace(' ', '')
+                # Find the row(s) where Strong_against is equal to Champ
+                champ_rows = outf.loc[outf['Good_with'] == Champ.replace('\'', '')]
+                # Modify the value
+                outf.loc[champ_rows.index, nom.replace('\'', '')] = valeur
+                print(str(Champ) + ' fort avec : ' + str(nom) + ' valeur : ' + str(valeur))
+            outf.to_csv('Good_with.csv', index=False)
 
 
 def csvStrong():
@@ -249,4 +245,84 @@ def reset(filename):
     ajoutMilioligne(filename)
 
 
-data_Good()
+def csvRole():
+    df = pd.DataFrame(columns=['Champion', 'Top', 'Jungle', 'Mid', 'ADC', 'Support'])
+    df.to_csv('Role.csv', index=False)
+
+
+def ajoutRole():
+    outf = pd.read_csv('Role.csv')
+    url = "https://www.leagueofgraphs.com/champions/counters"
+    response = requests.get(
+        url='https://proxy.scrapeops.io/v1/',
+        params={
+            'api_key': 'da78eeed-d20b-4c01-a7b2-bb30c6602ab8',
+            'url': url,
+        },
+    )
+    soup = BeautifulSoup(response.text, 'html.parser')
+    table = soup.find('table', {'class': 'data_table sortable_table'})
+    trs = table.findAll(lambda tag: tag.name == 'tr' and not tag.attrs)
+    for tr in trs:
+        top = False
+        jungle = False
+        mid = False
+        adc = False
+        support = False
+
+        div = tr.find('div', {'class': 'txt'})
+        Champ = div.find('span', {'class': 'name'}).text
+        # Cas particuliers
+        if Champ == 'Renata Glasc':
+            Champ = 'Renata'
+        if Champ == 'Dr. Mundo':
+            Champ = 'DrMundo'
+        if Champ == 'Wukong':
+            Champ = 'MonkeyKing'
+        if Champ == 'Nunu & Willump':
+            Champ = 'Nunu'
+        if Champ == 'Cho\'Gath':
+            Champ = 'Chogath'
+        if Champ == 'Fiddlesticks':
+            Champ = 'FiddleSticks'
+        Champ = Champ.replace('\'', '')
+        Champ = Champ.replace(' ', '')
+        Champ = Champ.lower()
+        if div is not None:
+            champ_role = div.find('i').text
+            champ_role = champ_role.split(',')
+            role = champ_role[0]
+            role = role.strip()
+            if role == 'Top':
+                top = True
+            if role == 'Jungler':
+                jungle = True
+            if role == 'Mid':
+                mid = True
+            if role == 'AD Carry':
+                adc = True
+            if role == 'Support':
+                support = True
+        new_row = {'Champion': Champ, 'Top': top, 'Jungle': jungle, 'Mid': mid, 'ADC': adc, 'Support': support}
+        outf = outf._append(new_row, ignore_index=True)
+        outf.to_csv('Role.csv', index=False)
+
+
+
+def ajoutRoleJson():
+    with open('champions.json', 'r', encoding='utf-8') as file:
+        role = pd.read_csv('Role.csv')
+        data = json.load(file)
+        for champ in data:
+
+            champion = champ['id']
+            column_name = None
+            # Récupérer le nom de la colonne pour laquelle champion a la valeur True
+            for index, row in role.iterrows():
+                if row['Champion'] == champion:
+                    column_name = row.index[row == True][0]
+                    break
+            champ['role'] = column_name
+
+    with open('champions.json', 'w', encoding='utf-8') as file:
+        json.dump(data, file, indent=4)
