@@ -61,7 +61,7 @@ for champion in team2:
     elif column_name == 'Support':
         team2_support = True
 
-if (len(team1) == 1 and len(team2) in [0,1]) or (len(team1) == 3 and len(team1) in [2,3]) or len(team1) == 5:
+if (len(team1) == 1 and len(team2) in [0,1]) or (len(team1) == 3 and len(team2) in [2,3]) or (len(team1) == 5):
     last_pick = team1[-1]
     for i in team2:
         reco = good_with[good_with['Good_with'] == i.lower()]
