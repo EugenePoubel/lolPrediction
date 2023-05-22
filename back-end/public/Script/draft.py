@@ -11,11 +11,9 @@ team1 = team1.split(",")
 team2 = sys.argv[2]
 team2 = team2.split(",")
 
-if team1 == ['']:
-    team1 = []
-
 if team2 == ['']:
     team2 = []
+
 
 team1_top = False
 team1_jungle = False
@@ -63,7 +61,7 @@ for champion in team2:
     elif column_name == 'Support':
         team2_support = True
 
-if len(team1) > len(team2):
+if (len(team1) == 1 and len(team2) in [0,1]) or (len(team1) == 3 and len(team1) in [2,3]) or len(team1) == 5:
     last_pick = team1[-1]
     for i in team2:
         reco = good_with[good_with['Good_with'] == i.lower()]
@@ -148,9 +146,9 @@ else:
             elif true_role == 'Support' and team1_support:
                 reco_dict.pop(name, None)
         list_of_dicts.append(reco_dict)
-
+"""
 print(team1_top, team1_jungle, team1_mid, team1_adc, team1_support)
 print(team2_top, team2_jungle, team2_mid, team2_adc, team2_support)
-
+"""
 json_str = json.dumps(list_of_dicts)
 print(json_str)
