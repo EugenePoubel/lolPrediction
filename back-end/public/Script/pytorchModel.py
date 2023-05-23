@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 
 # Charger le fichier CSV avec pandas
-df = pd.read_csv('dataset_Categories.csv')
+df = pd.read_csv('Script/dataset_Categories.csv')
 df = df.replace(True, 1)
 df = df.replace(False, 0)
 
@@ -75,7 +75,7 @@ for epoch in range(num_epochs):
         optimizer.step()
 
     # Afficher la perte moyenne pour l'époque actuelle
-    print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item():.4f}")
+    #print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item():.4f}")
 
 # Évaluer le modèle sur les données de test
 model.eval()
@@ -102,6 +102,6 @@ with torch.no_grad():
 
 # Afficher l'exactitude du modèle sur les données de test
 accuracy = 100 * correct / total
-print(f"Accuracy: {accuracy:.2f}%")
+#print(f"Accuracy: {accuracy:.2f}%")
 torch.save(model.state_dict(), "model.pth")
-print("Saved PyTorch Model State to model.pth")
+#print("Saved PyTorch Model State to model.pth")

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Grid, Typography, Fab, TextField, ThemeProvider, Avatar,IconButton } from '@mui/material';
+import { Button, Grid, Typography, Fab, TextField, ThemeProvider, Avatar,IconButton,Card,CardContent } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import champions from '../data/champions.json';
 import theme from "../theme";
@@ -15,9 +15,20 @@ import contour from  '../assets/player-object-ring.png';
 
 import fondSelectTeam1 from'../assets/equipe1.webm';
 import fondSelectTeam2 from'../assets/equipe2.webm';
+import ChampionRecommendations from "./ChampionRecommendations";
 
 function Draft() {
 
+    // Assumons que 'champions' est un tableau qui contient tous les champions disponibles
+// avec leurs informations, y compris leurs noms et icônes.
+    const [goodWith, setGoodWith] = useState([]);
+    const [strongAgainst, setStrongAgainst] = useState([]);
+
+// Ajoutez cette ligne avant le retour du composant Draft
+    const [selectedGoodWith, setSelectedGoodWith] = useState(null);
+    const [selectedStrongAgainst, setSelectedStrongAgainst] = useState(null)
+
+    const [transformedData, setTransformedData] = useState({ goodWith: [], strongAgainst: [] });
     const [nextSlotTeam1, setNextSlotTeam1] = useState(0);
     const [nextSlotTeam2, setNextSlotTeam2] = useState(0);
 
@@ -27,12 +38,50 @@ function Draft() {
     const [round, setRound] = useState(0);
     const [search, setSearch] = useState('');
 
+    const transformData = (data) => {
+        const goodWith = [];
+        const strongAgainst = [];
+
+        data.forEach((item) => {
+            let iterationCount = 0; // Compteur pour suivre le numéro de l'itération
+
+            if (item.Good_with) {
+                const relatedChampions = [];
+
+                Object.entries(item).forEach(([key, value]) => {
+                    if (iterationCount > 0) { // Ignorer la première itération
+                        relatedChampions.push(key);
+                    }
+
+                    iterationCount++;
+                });
+
+                goodWith.push({ [item.Good_with]: relatedChampions });
+            } else if (item.Strong_against) {
+                const counterList = [];
+
+                Object.entries(item).forEach(([key, value]) => {
+                    if (iterationCount > 0) { // Ignorer la première itération
+                        counterList.push(key);
+                    }
+
+                    iterationCount++;
+                });
+
+                strongAgainst.push({ [item.Strong_against]: counterList });
+            }
+        });
+        setGoodWith(goodWith);
+        setStrongAgainst(strongAgainst);
+        return { goodWith, strongAgainst };
+    };
+
 
 // Méthode pour obtenir les conseils de l'API
     const fetchAdvice = async () => {
         // Créer une liste des noms de champions pour chaque équipe
-        const team1Names = team1.map(champion => champion.name);
-        const team2Names = team2.map(champion => champion.name);
+        const team1Names = team1.map(champion => champion.id);
+        const team2Names = team2.map(champion => champion.id);
 
         // Créer l'objet à envoyer en POST
         const postData = {
@@ -51,9 +100,9 @@ function Draft() {
 
         // Récupérer les conseils
         const data = await response.json();
-
-        // Mettre à jour l'état des conseils
-        setAdvice(data);
+        const transformedData = transformData(data);
+        setTransformedData(transformedData);
+        console.log(transformedData);
     };
 
 
@@ -69,6 +118,12 @@ function Draft() {
 
     const draftOrder = [1, 2, 2, 1, 1, 2, 2, 1, 1, 2]; // Ordre de draft
 
+    useEffect(() => {
+        if(team1.length > 0 || team2.length > 0) { // vérifie qu'au moins un champion a été ajouté
+            fetchAdvice();
+        }
+    }, [team1, team2]); // dépendance à l'état de team1 et team2
+
     const handleSelection = (champion) => {
         const team = draftOrder[round];
         if (team === 1 && team1.length < 5) {
@@ -83,9 +138,8 @@ function Draft() {
         }
         // Avancer au prochain tour de sélection
         setRound(round + 1);
-        // Obtenir des conseils pour le champion sélectionné
-        fetchAdvice(champion);
     };
+
 
 
     // Générer une liste de champions non encore sélectionnés
@@ -194,7 +248,6 @@ function Draft() {
                     </Grid>
 
                     <Grid item xs={6}>
-                        <Typography variant="h2" gutterBottom>Champions disponibles</Typography>
                         <TextField
                             variant="outlined"
                             placeholder="Rechercher un champion..."
@@ -218,17 +271,16 @@ function Draft() {
                                 </Grid>
                             ))}
                         </Grid>
-
-
-
-                        <Typography variant="h2" gutterBottom>
-                            Conseils :
+                        <Typography variant="h1">
+                            Conseil
                         </Typography>
-                        {advice.map((tip, index) => (
-                            <Typography key={index} variant="body1">
-                                {tip}
-                            </Typography>
-                        ))}
+                        <Grid>
+
+                            <ChampionRecommendations champions={champions} goodWith={goodWith} strongAgainst={strongAgainst} />
+                        </Grid>
+
+
+
                     </Grid>
                     <Grid item xs={3}>
                         <Typography variant="h2" gutterBottom>Equipe 2</Typography>
@@ -294,57 +346,6 @@ function Draft() {
                     </Grid>
                 </Grid>
             </div>
-            {advice.map((adviceItem, index) => {
-                if(adviceItem.Good_with) {
-                    return (
-                        <Grid key={index} item xs={2}>
-                            <Typography variant="body2" component="span">
-                                Bon avec {adviceItem.Good_with} :
-                            </Typography>
-                            <Grid container direction="row">
-                                {Object.entries(adviceItem).map(([championName, value], idx) => {
-                                    if (championName !== 'Good_with') {
-                                        return (
-                                            <Grid item key={idx}>
-                                                <img src={champions.find(c => c.name === championName).icon} alt={championName} style={{width: '20px', height: '20px'}}/>
-                                                <Typography variant="body2" component="span">
-                                                    {championName} ({value})
-                                                </Typography>
-                                            </Grid>
-                                        );
-                                    }
-                                    return null;
-                                })}
-                            </Grid>
-                        </Grid>
-                    );
-                } else if(adviceItem.Strong_against) {
-                    return (
-                        <Grid key={index} item xs={2}>
-                            <Typography variant="body2" component="span">
-                                Bon contre {adviceItem.Strong_against} :
-                            </Typography>
-                            <Grid container direction="row">
-                                {Object.entries(adviceItem).map(([championName, value], idx) => {
-                                    if (championName !== 'Strong_against') {
-                                        return (
-                                            <Grid item key={idx}>
-                                                <img src={champions.find(c => c.name === championName).icon} alt={championName} style={{width: '20px', height: '20px'}}/>
-                                                <Typography variant="body2" component="span">
-                                                    {championName} ({value})
-                                                </Typography>
-                                            </Grid>
-                                        );
-                                    }
-                                    return null;
-                                })}
-                            </Grid>
-                        </Grid>
-                    );
-                }
-                return null;
-            })}
-
         </ThemeProvider>
     );
 }

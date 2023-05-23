@@ -6,6 +6,7 @@ import Prediction from '../Prediction/Prediction';
 import Draft from '../Draft/Draft';
 // Importer les composants nécessaires pour gérer la navigation
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import PredictionLive from "../PredictionLive/PredictionLive";
 
 // Fonction du composant principal de l'application
 function App() {
@@ -22,6 +23,8 @@ function App() {
                     <Route path="/prediction" element={<Prediction />} />
                     {/* Route pour la page de Draft */}
                     <Route path="/draft" element={<Draft />} />
+                    {/* Route pour la page de predictionLive */}
+                    <Route path="/predictionLive/:pseudo" element={<PredictionLive />} />
                 </Routes>
             </div>
         </Router>

@@ -1,16 +1,19 @@
 import json
-
 import pandas as pd
 import sys
 
-good_with = pd.read_csv('Good_with.csv')
-strong_against = pd.read_csv('Strong_against.csv')
-role = pd.read_csv('role.csv')
+good_with = pd.read_csv('Script/Good_with.csv')
+strong_against = pd.read_csv('Script/Strong_against.csv')
+role = pd.read_csv('Script/Role.csv')
 
 team1 = sys.argv[1]
 team1 = team1.split(",")
 team2 = sys.argv[2]
 team2 = team2.split(",")
+
+if team2 == ['']:
+    team2 = []
+
 
 team1_top = False
 team1_jungle = False
@@ -58,10 +61,10 @@ for champion in team2:
     elif column_name == 'Support':
         team2_support = True
 
-if len(team1) > len(team2):
+if (len(team1) == 1 and len(team2) in [0,1]) or (len(team1) == 3 and len(team2) in [2,3]) or (len(team1) == 5):
     last_pick = team1[-1]
     for i in team2:
-        reco = good_with[good_with['Good_with'] == i]
+        reco = good_with[good_with['Good_with'] == i.lower()]
         reco_dict = reco.dropna(axis=1).iloc[0].to_dict()
         for name in team1 + team2:
             reco_dict.pop(name, None)
@@ -82,7 +85,7 @@ if len(team1) > len(team2):
         list_of_dicts.append(reco_dict)
 
     for j in team1:
-        reco = strong_against[strong_against['Strong_against'] == j]
+        reco = strong_against[strong_against['Strong_against'] == j.lower()]
         reco_dict = reco.dropna(axis=1).iloc[0].to_dict()
         for name in team1 + team2:
             reco_dict.pop(name, None)
@@ -104,7 +107,7 @@ if len(team1) > len(team2):
 else:
     last_pick = team2[-1]
     for i in team1:
-        reco = good_with[good_with['Good_with'] == i]
+        reco = good_with[good_with['Good_with'] == i.lower()]
         reco_dict = reco.dropna(axis=1).iloc[0].to_dict()
         for name in team1 + team2:
             reco_dict.pop(name, None)
@@ -124,7 +127,7 @@ else:
                 reco_dict.pop(name, None)
         list_of_dicts.append(reco_dict)
     for j in team2:
-        reco = strong_against[strong_against['Strong_against'] == j]
+        reco = strong_against[strong_against['Strong_against'] == j.lower()]
         reco_dict = reco.dropna(axis=1).iloc[0].to_dict()
         for name in team1 + team2:
             reco_dict.pop(name, None)
@@ -143,9 +146,9 @@ else:
             elif true_role == 'Support' and team1_support:
                 reco_dict.pop(name, None)
         list_of_dicts.append(reco_dict)
-
+"""
 print(team1_top, team1_jungle, team1_mid, team1_adc, team1_support)
 print(team2_top, team2_jungle, team2_mid, team2_adc, team2_support)
-
+"""
 json_str = json.dumps(list_of_dicts)
 print(json_str)

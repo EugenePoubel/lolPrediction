@@ -16,6 +16,8 @@ import { useNavigate } from 'react-router-dom';
 
 function Home() {
     // Définir les états locaux , Navigation , la vidéo ...
+    const [pseudo, setPseudo] = React.useState('');
+
     const navigate = useNavigate();
     const rand = Math.floor(Math.random() * 196) + 1; // Génère un nombre aléatoire entre 1 et 196
     const [currentVideoIndex, setCurrentVideoIndex] = React.useState(rand);
@@ -32,6 +34,10 @@ function Home() {
     // Gestion de la navigation vers la page de Draft
     const handleDraftClick = () => {
         navigate('/draft');
+    };
+
+    const handlePseudoSubmit = () => {
+        navigate(`/predictionLive/${encodeURIComponent(pseudo)}`);
     };
 
     // Il y a 196 vidéo
@@ -53,6 +59,13 @@ function Home() {
         setVolume(70);
         fond.current.volume = 0.7;
     };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handlePseudoSubmit();
+        }
+    };
+
 
 
     const handleVolumeChange = (event, newValue) => {
@@ -77,6 +90,9 @@ function Home() {
                     type="text"
                     className="username-input"
                     placeholder="Entrez votre pseudo"
+                    value={pseudo}
+                    onChange={(e) => setPseudo(e.target.value)}
+                    onKeyPress={handleKeyPress}
                 />
                 <select className="server-select">
                     <option value="EUW">EUW</option>
@@ -121,7 +137,6 @@ function Home() {
             >
                 Mode Draft
             </Button>
-
         </div>
     );
 }
