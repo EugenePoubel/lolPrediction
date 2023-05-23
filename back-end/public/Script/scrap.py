@@ -63,6 +63,7 @@ def data_Strong():
                     Champ = 'FiddleSticks'
                 Champ = Champ.replace('\'', '')
                 Champ = Champ.replace(' ', '')
+                Champ = Champ.lower()
                 table = soup.find('table', {'class': 'data_table sortable_table'})
                 trs = table.findAll('tr', {'class': ''})
                 for i in range(1, len(trs)):
@@ -84,6 +85,7 @@ def data_Strong():
                         nom = 'FiddleSticks'
                     nom = nom.replace('\'', '')
                     nom = nom.replace(' ', '')
+                    nom = nom.lower()
                     # Find the row(s) where Strong_against is equal to Champ
                     champ_rows = outf.loc[outf['Strong_against'] == Champ.replace('\'', '')]
                     # Modify the value
@@ -119,6 +121,7 @@ def data_Good():
                 Champ = 'FiddleSticks'
             Champ = Champ.replace('\'', '')
             Champ = Champ.replace(' ', '')
+            Champ = Champ.lower()
             table = soup.findAll('table', {'class': 'data_table sortable_table'})
             trs = table[2].findAll('tr', {'class': ''})
             for i in range(1, len(trs)):
@@ -142,6 +145,7 @@ def data_Good():
                     nom = 'FiddleSticks'
                 nom = nom.replace('\'', '')
                 nom = nom.replace(' ', '')
+                nom = nom.lower()
                 # Find the row(s) where Strong_against is equal to Champ
                 champ_rows = outf.loc[outf['Good_with'] == Champ.replace('\'', '')]
                 # Modify the value
@@ -158,9 +162,9 @@ def csvStrong():
         file.write('Strong_against,')
         for i in range(0, len(Champions_Names)):
             if i == len(Champions_Names) - 1:
-                file.write(Champions_Names[i])
+                file.write(Champions_Names[i].lower())
             else:
-                file.write(Champions_Names[i] + ',')
+                file.write(Champions_Names[i].lower() + ',')
         file.write('\n')
 
 
@@ -172,9 +176,9 @@ def csvGood():
         file.write('Good_with,')
         for i in range(0, len(Champions_Names)):
             if i == len(Champions_Names) - 1:
-                file.write(Champions_Names[i])
+                file.write(Champions_Names[i].lower())
             else:
-                file.write(Champions_Names[i] + ',')
+                file.write(Champions_Names[i].lower() + ',')
         file.write('\n')
 
 
@@ -186,7 +190,7 @@ def ajoutMilioCol(filename):
 
         # Get the header row and add the new column name
         header = next(reader)
-        header.insert(78, 'Milio')
+        header.insert(78, 'milio')
 
     # Open the CSV file for writing and write the updated rows
     with open(filename + '.csv', 'w', newline='') as csvfile:
@@ -208,7 +212,7 @@ def ajoutNom(filename):
 
     # Loop over the unique Champion1_Name values and append to the Strong_against dataframe
     for name in Champions_Names:
-        new_row = {filename: name}
+        new_row = {filename: name.lower()}
         # Append the new row to the existing dataframe
         outf = outf._append(new_row, ignore_index=True)
 
@@ -221,7 +225,7 @@ def ajoutMilioligne(filename):
     data = pd.read_csv(filename + '.csv')
 
     # Create a new row with the new values
-    new_row = pd.DataFrame({filename: ['Milio']}, index=[0])
+    new_row = pd.DataFrame({filename: ['milio']}, index=[0])
 
     # Split the original dataframe into two parts: the top part before the new row, and the bottom part after the new row
     index = 77  # the index at which to insert the new row
@@ -308,7 +312,6 @@ def ajoutRole():
         outf.to_csv('Role.csv', index=False)
 
 
-
 def ajoutRoleJson():
     with open('champions.json', 'r', encoding='utf-8') as file:
         role = pd.read_csv('Role.csv')
@@ -326,3 +329,6 @@ def ajoutRoleJson():
 
     with open('champions.json', 'w', encoding='utf-8') as file:
         json.dump(data, file, indent=4)
+
+
+data_Strong()

@@ -4,7 +4,6 @@ import sys
 import numpy as np
 import torch
 from pytorchModel import MyModel
-from pytorchModel import accuracy
 
 # Créez une nouvelle instance du modèle avec la même architecture
 loaded_model = MyModel(input_size=347)
@@ -30,7 +29,6 @@ def main():
     Champ2 = Champ2.split(",")
     AdvancedFeatures = sys.argv[3]
     AdvancedFeatures = json.loads(AdvancedFeatures)
-    #print(AdvancedFeatures)
     # Création de la matrice vide
     matrice = {}
     for i in noms_colonnes:
@@ -43,7 +41,6 @@ def main():
     for i in AdvancedFeatures:
         matrice[i] = AdvancedFeatures[i]
 
-    #print(len(matrice))
     input_data = list(matrice.values())
     input_data = np.array(input_data, dtype=np.float32)
 
@@ -62,7 +59,7 @@ def main():
 
     # Convertir la probabilité en classe en utilisant un seuil
     predicted_class = 1 if probability >= 0.5 else 0
-    result = {"probability": probability, "predicted_class": predicted_class, "Accuracy": accuracy}
+    result = {"probability": probability, "predicted_class": predicted_class}
     result_json = json.dumps(result)
     print(result_json)
 

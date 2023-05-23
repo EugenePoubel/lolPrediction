@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 
 # Charger le fichier CSV avec pandas
-df = pd.read_csv('Script/dataset_Categories.csv')
+df = pd.read_csv('dataset_Categories.csv')
 df = df.replace(True, 1)
 df = df.replace(False, 0)
 
@@ -50,58 +50,59 @@ learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 loss_fn = torch.nn.BCEWithLogitsLoss()
 
-num_epochs = 10
+if __name__ == '__main__':
+    num_epochs = 10
 
-# Boucle d'entraînement
-for epoch in range(num_epochs):
-    for batch in train_dataloader:
-        # Récupérer les données du batch
-        batch_X, batch_y = batch
+    # Boucle d'entraînement
+    for epoch in range(num_epochs):
+        for batch in train_dataloader:
+            # Récupérer les données du batch
+            batch_X, batch_y = batch
 
-        # Mettre les données sur le GPU si disponible
-        if torch.cuda.is_available():
-            batch_X = batch_X.cuda()
-            batch_y = batch_y.cuda()
+            # Mettre les données sur le GPU si disponible
+            if torch.cuda.is_available():
+                batch_X = batch_X.cuda()
+                batch_y = batch_y.cuda()
 
-        # Calculer les prédictions
-        y_pred = model(batch_X)
+            # Calculer les prédictions
+            y_pred = model(batch_X)
 
-        # Calculer la perte
-        loss = loss_fn(y_pred.squeeze(), batch_y)
+            # Calculer la perte
+            loss = loss_fn(y_pred.squeeze(), batch_y)
 
-        # Calculer les gradients et mettre à jour les poids
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+            # Calculer les gradients et mettre à jour les poids
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-    # Afficher la perte moyenne pour l'époque actuelle
-    #print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item():.4f}")
+        # Afficher la perte moyenne pour l'époque actuelle
+        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item():.4f}")
 
-# Évaluer le modèle sur les données de test
-model.eval()
-correct = 0
-total = 0
+    # Évaluer le modèle sur les données de test
+    model.eval()
+    correct = 0
+    total = 0
 
-with torch.no_grad():
-    for batch in test_dataloader:
-        # Récupérer les données du batch
-        batch_X, batch_y = batch
+    with torch.no_grad():
+        for batch in test_dataloader:
+            # Récupérer les données du batch
+            batch_X, batch_y = batch
 
-        # Mettre les données sur le GPU si disponible
-        if torch.cuda.is_available():
-            batch_X = batch_X.cuda()
-            batch_y = batch_y.cuda()
+            # Mettre les données sur le GPU si disponible
+            if torch.cuda.is_available():
+                batch_X = batch_X.cuda()
+                batch_y = batch_y.cuda()
 
-        # Calculer les prédictions
-        y_pred = model(batch_X)
-        y_pred_class = torch.round(torch.sigmoid(y_pred))
+            # Calculer les prédictions
+            y_pred = model(batch_X)
+            y_pred_class = torch.round(torch.sigmoid(y_pred))
 
-        # Mettre à jour les compteurs
-        total += batch_y.size(0)
-        correct += (y_pred_class.squeeze() == batch_y).sum().item()
+            # Mettre à jour les compteurs
+            total += batch_y.size(0)
+            correct += (y_pred_class.squeeze() == batch_y).sum().item()
 
-# Afficher l'exactitude du modèle sur les données de test
-accuracy = 100 * correct / total
-#print(f"Accuracy: {accuracy:.2f}%")
-torch.save(model.state_dict(), "model.pth")
-#print("Saved PyTorch Model State to model.pth")
+    # Afficher l'exactitude du modèle sur les données de test
+    accuracy = 100 * correct / total
+    print(f"Accuracy: {accuracy:.2f}%")
+    torch.save(model.state_dict(), "model.pth")
+    print("Saved PyTorch Model State to model.pth")
