@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 
 # Charger le fichier CSV avec pandas
-df = pd.read_csv('dataset_Categories.csv')
+df = pd.read_csv('Script/dataset_Categories.csv')
 df = df.replace(True, 1)
 df = df.replace(False, 0)
 

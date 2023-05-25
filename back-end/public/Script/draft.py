@@ -2,9 +2,9 @@ import json
 import pandas as pd
 import sys
 
-good_with = pd.read_csv('Good_with.csv')
-strong_against = pd.read_csv('Strong_against.csv')
-role = pd.read_csv('Role.csv')
+good_with = pd.read_csv('Script/Good_with.csv')
+strong_against = pd.read_csv('Script/Strong_against.csv')
+role = pd.read_csv('Script/Role.csv')
 
 team1 = sys.argv[1]
 team1 = team1.split(",")

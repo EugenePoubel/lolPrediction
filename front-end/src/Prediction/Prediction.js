@@ -33,7 +33,6 @@ import AddIcon from "@mui/icons-material/Add";
 
 
 function Prediction() {
-    const allChampions = champions;
     const navigate = useNavigate();
     const [team1, setTeam1] = useState(Array(5).fill(null));
     const [team2, setTeam2] = useState(Array(5).fill(null));

@@ -18,14 +18,13 @@ class WinrateController extends AbstractController
         error_log(json_encode($data));
         $championsTeam1 = implode(',', $data['team1']); // Assuming this is an array
         error_log('championsTeam1 : ' . $championsTeam1);
-
         $championsTeam2 = implode(',', $data['team2']); // Assuming this is an array
         error_log('championsTeam2 : ' . $championsTeam2);
 
         $process = new Process(['/data/lolprediction-docker/miniconda/back-end/bin/python3', 'Script/test_model.py', $championsTeam1, $championsTeam2, json_encode($data["advancedOptions"])]);
         $process->run();
 
-// Executes after the command finishes
+
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
