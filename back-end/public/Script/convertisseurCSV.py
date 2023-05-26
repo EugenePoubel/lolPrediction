@@ -4,7 +4,12 @@ import json
 import pandas as pd
 
 data = pd.read_csv('dataset.csv')
-Champions_Names = data['Champion1_Name'].unique()
+Champions_Names = []
+with open('newChampions.json', 'r', encoding='utf-8') as file:
+    champions = json.load(file)
+    for champ in champions["data"]:
+        Champions_Names.append(champions["data"][str(champ)]["id"])
+
 # création features champions team 1
 prefix = 'Team1_'
 Team1_Champion = [prefix + x for x in Champions_Names]
@@ -24,7 +29,6 @@ en_tetes = ['gameDuration', 'Team1_baron_first', 'Team1_baron_kills', 'Team1_kil
 en_tetes += list(Champions_Teams)
 print(en_tetes)
 
-
 # ouvrir le fichier CSV en mode écriture et créer un csv avec les en-têtes
 def entete(labels):
     with open('dataset_Categories.csv', 'w', newline='') as f:
@@ -34,6 +38,8 @@ def entete(labels):
         # écrire les en-têtes de colonnes
         writer.writerow(labels)
 
+
+# entete(en_tetes)
 # définir le chemin du dossier contenant les fichiers à traiter
 chemin_dossier = 'D:\COURS\Projet\Dataset\datasets\scraped\grandmaster\games'
 #chemin_dossier = 'D:\COURS\Projet\Dataset\datasets\scraped\challenger\games'
@@ -70,7 +76,7 @@ for fichier in liste_fichiers:
         # écrire les données
         writer.writerow(liste_donnees)
 
-k = 2963
+k = 2964
 data_Categories = pd.read_csv('dataset_Categories.csv')
 # parcourir la liste des fichiers
 for fichier in liste_fichiers:
