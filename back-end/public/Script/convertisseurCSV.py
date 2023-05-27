@@ -29,6 +29,7 @@ en_tetes = ['gameDuration', 'Team1_baron_first', 'Team1_baron_kills', 'Team1_kil
 en_tetes += list(Champions_Teams)
 print(en_tetes)
 
+
 # ouvrir le fichier CSV en mode écriture et créer un csv avec les en-têtes
 def entete(labels):
     with open('dataset_Categories.csv', 'w', newline='') as f:
@@ -39,7 +40,7 @@ def entete(labels):
         writer.writerow(labels)
 
 
-# entete(en_tetes)
+#entete(en_tetes)
 # définir le chemin du dossier contenant les fichiers à traiter
 chemin_dossier = 'D:\COURS\Projet\Dataset\datasets\scraped\grandmaster\games'
 #chemin_dossier = 'D:\COURS\Projet\Dataset\datasets\scraped\challenger\games'
@@ -84,10 +85,16 @@ for fichier in liste_fichiers:
     with open(os.path.join(chemin_dossier, fichier), 'r') as f:
         data = json.load(f)
     for j in range(10):
-        if(j<5):
-            data_Categories.loc[k, 'Team1_' + data['info']['participants'][j]['championName']] = 1
+        if (j < 5):
+            if (data['info']['participants'][j]['championName']) == 'FiddleSticks':
+                data_Categories.loc[k, 'Team1_Fiddlesticks'] = 1
+            else:
+                data_Categories.loc[k, 'Team1_' + data['info']['participants'][j]['championName']] = 1
         else:
-            data_Categories.loc[k, 'Team2_' + data['info']['participants'][j]['championName']] = 1
+            if (data['info']['participants'][j]['championName']) == 'FiddleSticks':
+                data_Categories.loc[k, 'Team1_Fiddlesticks'] = 1
+            else:
+                data_Categories.loc[k, 'Team2_' + data['info']['participants'][j]['championName']] = 1
     k += 1
 
 data_Categories.to_csv('dataset_Categories.csv', index=False)

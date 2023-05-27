@@ -6,9 +6,9 @@ import torch
 from pytorchModel import MyModel
 
 # Créez une nouvelle instance du modèle avec la même architecture
-loaded_model = MyModel(input_size=347)
+loaded_model = MyModel(input_size=349)
 
-loaded_model.load_state_dict(torch.load("Script/model.pth"))
+loaded_model.load_state_dict(torch.load("model.pth"))
 loaded_model.eval()
 
 
@@ -19,7 +19,7 @@ def main():
         print("Usage: python prediction.py Team1 Team2 AdvancedFeatures")
         return
     # Charger le fichier CSV
-    df = pd.read_csv("Script/dataset_Categories.csv")
+    df = pd.read_csv("dataset_Categories.csv")
     # Récupérer les noms de colonnes
     noms_colonnes = df.columns.tolist()
     noms_colonnes.remove("Team1_win")

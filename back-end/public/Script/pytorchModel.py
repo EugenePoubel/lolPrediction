@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 
 # Charger le fichier CSV avec pandas
-df = pd.read_csv('Script/dataset_Categories.csv')
+df = pd.read_csv('dataset_Categories.csv')
 df = df.replace(True, 1)
 df = df.replace(False, 0)
 
@@ -45,7 +45,7 @@ class MyModel(nn.Module):
         return x
 
 
-model = MyModel(input_size=347)
+model = MyModel(input_size=349)
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 loss_fn = torch.nn.BCEWithLogitsLoss()
