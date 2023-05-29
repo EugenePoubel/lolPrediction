@@ -2,9 +2,9 @@ import json
 import pandas as pd
 import sys
 
-good_with = pd.read_csv('Script/Good_with.csv')
-strong_against = pd.read_csv('Script/Strong_against.csv')
-role = pd.read_csv('Script/Role.csv')
+good_with = pd.read_csv('Good_with.csv')
+strong_against = pd.read_csv('Strong_against.csv')
+role = pd.read_csv('Role.csv')
 
 team1 = sys.argv[1]
 team1 = team1.split(",")
@@ -85,8 +85,17 @@ if (len(team1) == 1 and len(team2) in [0,1]) or (len(team1) == 3 and len(team2) 
         list_of_dicts.append(reco_dict)
 
     for j in team1:
-        reco = strong_against[strong_against['Strong_against'] == j.lower()]
-        reco_dict = reco.dropna(axis=1).iloc[0].to_dict()
+        reco = strong_against[j.lower()]
+        noms = strong_against['Strong_against']
+        data = pd.DataFrame({
+            'Strong_against': noms,
+            j.lower(): reco
+        })
+        data = data.dropna(subset=[j.lower()])
+        data = data[~data['Strong_against'].isin(team1 + team2)]
+        dict_data = data.set_index('Strong_against')[j.lower()].to_dict()
+        reco_dict = {'Strong_against': j.lower()}
+        reco_dict.update(dict_data)
         for name in team1 + team2:
             reco_dict.pop(name, None)
         keys_list = list(reco_dict.keys())[1:]
@@ -127,10 +136,17 @@ else:
                 reco_dict.pop(name, None)
         list_of_dicts.append(reco_dict)
     for j in team2:
-        reco = strong_against[strong_against['Strong_against'] == j.lower()]
-        reco_dict = reco.dropna(axis=1).iloc[0].to_dict()
-        for name in team1 + team2:
-            reco_dict.pop(name, None)
+        reco = strong_against[j.lower()]
+        noms = strong_against['Strong_against']
+        data = pd.DataFrame({
+            'Strong_against': noms,
+            j.lower(): reco
+        })
+        data = data.dropna(subset=[j.lower()])
+        data = data[~data['Strong_against'].isin(team1+team2)]
+        dict_data = data.set_index('Strong_against')[j.lower()].to_dict()
+        reco_dict = {'Strong_against': j.lower()}
+        reco_dict.update(dict_data)
         keys_list = list(reco_dict.keys())[1:]
         for name in keys_list:
             roles = role[role['Champion'] == name.lower()]
